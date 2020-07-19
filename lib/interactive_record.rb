@@ -1,5 +1,6 @@
 require_relative "../config/environment.rb"
 require 'active_support/inflector'
+require 'pry'
 
 class InteractiveRecord
   def self.table_name
@@ -55,8 +56,11 @@ class InteractiveRecord
   def self.find_by(attribute_hash)
     key = attribute_hash.keys.first
     value = attribute_hash.values.first
-    formatted_value = value.class == Integer ? value : "'#{value}'"
-    sql = "SELECT * FROM #{self.table_name} WHERE #{key} = #{formatted_value}"
+    if value.class == Integer
+      sql = "SELECT * FROM #{self.table_name} WHERE #{key} = #{value}"
+    else
+      sql = "SELECT * FROM #{self.table_name} WHERE #{key} = '#{value}'"
+    end
     DB[:conn].execute(sql)
   end
 end
